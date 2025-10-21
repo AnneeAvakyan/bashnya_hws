@@ -1,27 +1,30 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 const maxNum = 12306
 
+var from1To19 = []string{"", "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять", "десять",
+	"одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать"}
+var less100 = []string{"десять", "двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят", "восемьдесят", "девяносто"}
+var thousands = []string{"", "тысяча", "тысячи", "тысяч"}
+
 func main() {
+	fmt.Printf("Введите число, не превышающее %d:  ", maxNum)
 	var number int
 	fmt.Scan(&number)
-	fmt.Println(makeWords(number))
-	// fmt.Printf("Введите число, не превышающее %d:  ", maxNum)
-	// var number int
-	// fmt.Scan(&number)
+	if number > maxNum {
+		fmt.Println("Ошибка. Введённое число превышает границу")
 
-	// if number > maxNum {
-	// 	fmt.Println("Ошибка. Введённое число превышает границу")
-
-	// } else {
-	// 	var result int = execute(number)
-	// 	if result != 0 {
-	// 		fmt.Printf("Ответ: %d\n", result)
-	// 		fmt.Println(makeWords(result))
-	// 	}
-	// }
+	} else {
+		var result int = execute(number)
+		if result != 0 {
+			fmt.Printf("Ответ: %d\n", result)
+			fmt.Println(makeWords(result))
+		}
+	}
 
 }
 
@@ -58,20 +61,18 @@ func execute(num int) int {
 
 func makeWords(num int) string {
 	result := ""
+	num, result = convertEnsOfThous(num, result)
+	num, result = convertThous(num, result)
+	num, result = convertHundreds(num, result)
+	result = convertDoubleDigits(num, result)
+	return result
+}
 
-	var from1To19 = []string{"", "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять", "десять",
-		"одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать"}
-	var less100 = []string{"десять", "двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят", "восемьдесят", "девяносто"}
-	var thousands = []string{"", "тысяча", "тысячи", "тысяч"}
-
-	if num == 0 {
-		result = "нолик"
-	}
-
+func convertEnsOfThous(num int, result string) (int, string) {
 	if num >= 20000 && num < 100000 {
 		ending := (num / 1000) % 10
 		if ending == 0 {
-			result += less100[(num/10000)-1] + " "
+			result += less100[(num/10000)-1] + " " + thousands[3] + " "
 		} else if ending == 1 {
 			result += less100[(num/10000)-1] + " "
 		} else if ending == 2 {
@@ -81,19 +82,25 @@ func makeWords(num int) string {
 		}
 		num %= 10000
 	}
+	return num, result
+}
 
+func convertThous(num int, result string) (int, string) {
 	if num >= 1000 && num < 20000 {
 		ending := (num / 1000) % 10
-		if ending == 1 {
+		if ending == 1 && (num/10000)%10 != 1 {
 			result += "одна" + " " + thousands[1] + " "
-		} else if ending >= 2 && ending <= 4 {
+		} else if ending >= 2 && ending <= 4 && (num/10000)%10 != 1 {
 			result += from1To19[(num/1000)] + " " + thousands[2] + " "
 		} else {
 			result += from1To19[(num/1000)] + " " + thousands[3] + " "
 		}
 		num %= 1000
 	}
+	return num, result
+}
 
+func convertHundreds(num int, result string) (int, string) {
 	if num >= 100 {
 		ending := (num / 100) % 10
 		switch ending {
@@ -110,7 +117,10 @@ func makeWords(num int) string {
 		}
 		num %= 100
 	}
+	return num, result
+}
 
+func convertDoubleDigits(num int, result string) string {
 	if num >= 20 {
 		result += less100[(num/10)-1] + " "
 		num %= 10
