@@ -155,6 +155,40 @@ func (node *Node) inOrder(result *[]int) {
 	node.RightChild.inOrder(result)
 }
 
+func (bst *BST) PreOrder() []int {
+	var result []int
+	if bst.Root != nil {
+		bst.Root.preOrder(&result)
+	}
+	return result
+}
+
+func (node *Node) preOrder(result *[]int) {
+	if node == nil {
+		return
+	}
+	*result = append(*result, node.Data)
+	node.LeftChild.preOrder(result)
+	node.RightChild.preOrder(result)
+}
+
+func (bst *BST) PostOrder() []int {
+	var result []int
+	if bst.Root != nil {
+		bst.Root.postOrder(&result)
+	}
+	return result
+}
+
+func (node *Node) postOrder(result *[]int) {
+	if node == nil {
+		return
+	}
+	node.LeftChild.postOrder(result)
+	node.RightChild.postOrder(result)
+	*result = append(*result, node.Data)
+}
+
 func (tree *BST) PrintTree() []string {
 	if tree.Root == nil {
 		return []string{"Пустое дерево"}
@@ -214,8 +248,10 @@ func main() {
 	}
 	fmt.Println("Исходное дерево:")
 	output(bst)
+	fmt.Println("Прямой обход:\n", bst.PreOrder())
 
-	fmt.Println(bst.InOrder())
+	fmt.Println("Центрированный обход:\n", bst.InOrder())
+	fmt.Println("Обратный обход:\n", bst.PostOrder())
 	fmt.Println("Глубина:", bst.Depth())
 
 	fmt.Println("\nУдаляем 2:", bst.Remove(2))
