@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type BinaryST interface {
 	Insert(int)
@@ -153,6 +155,48 @@ func (node *Node) inOrder(result *[]int) {
 	node.RightChild.inOrder(result)
 }
 
+func (tree *BST) PrintTree() []string {
+	if tree.Root == nil {
+		return []string{"Пустое дерево"}
+	}
+
+	return tree.Root.printLevels("", false)
+}
+
+func (node *Node) printLevels(prefix string, hasParent bool) []string {
+	if node == nil {
+		return []string{"Пустое дерево"}
+	}
+	var result []string
+	childPrefix := prefix
+
+	if hasParent == false { // корень
+		result = append(result, fmt.Sprintf("%s%d", prefix, node.Data))
+		// result = append(result, fmt.Sprintf("%s", prefix))
+	} else {
+
+		result = append(result, fmt.Sprintf("%s%d", prefix, node.Data))
+
+	}
+	if hasParent == false {
+		childPrefix += "\\___"
+	} else {
+		childPrefix += "|___"
+	}
+
+	if node.LeftChild != nil {
+		leftLines := node.LeftChild.printLevels(childPrefix, true)
+		result = append(result, leftLines...)
+	}
+
+	if node.RightChild != nil {
+		rightLines := node.RightChild.printLevels(childPrefix, true)
+		result = append(result, rightLines...)
+	}
+
+	return result
+}
+
 func main() {
 
 	bst := NewBST()
@@ -162,7 +206,13 @@ func main() {
 		bst.Insert(value)
 	}
 
-	fmt.Println("Исходное дерево: ", bst.InOrder())
+	fmt.Println("Исходное дерево:")
+	lines := bst.PrintTree()
+	for _, line := range lines {
+		fmt.Println(line)
+	}
+
+	fmt.Println(bst.InOrder())
 	fmt.Println("Глубина:", bst.Depth())
 
 	fmt.Println("\nУдаляем 2:", bst.Remove(2))
@@ -174,6 +224,11 @@ func main() {
 	fmt.Println("\nУдаляем 5:", bst.Remove(5))
 	fmt.Println("После удаления 5:", bst.InOrder())
 	fmt.Println("Глубина:", bst.Depth())
+
+	lines = bst.PrintTree()
+	for _, line := range lines {
+		fmt.Println(line)
+	}
 
 	fmt.Println("\nПоиск 6:", bst.Find(6))
 	fmt.Println("Поиск 5:", bst.Find(5))
