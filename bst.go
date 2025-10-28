@@ -105,9 +105,9 @@ func remove(node *Node, value int) (*Node, bool) {
 	}
 
 	var removed bool
-	if node.Data < value {
+	if node.Data > value {
 		node.LeftChild, removed = remove(node.LeftChild, value)
-	} else if node.Data > value {
+	} else if node.Data < value {
 		node.RightChild, removed = remove(node.RightChild, value)
 	} else {
 		// когда нашли нужный узел
@@ -197,6 +197,13 @@ func (node *Node) printLevels(prefix string, hasParent bool) []string {
 	return result
 }
 
+func output(bst *BST) {
+	lines := bst.PrintTree()
+	for _, line := range lines {
+		fmt.Println(line)
+	}
+}
+
 func main() {
 
 	bst := NewBST()
@@ -205,12 +212,8 @@ func main() {
 	for _, value := range values {
 		bst.Insert(value)
 	}
-
 	fmt.Println("Исходное дерево:")
-	lines := bst.PrintTree()
-	for _, line := range lines {
-		fmt.Println(line)
-	}
+	output(bst)
 
 	fmt.Println(bst.InOrder())
 	fmt.Println("Глубина:", bst.Depth())
@@ -218,17 +221,18 @@ func main() {
 	fmt.Println("\nУдаляем 2:", bst.Remove(2))
 	fmt.Println("После удаления 2:", bst.InOrder())
 
+	output(bst)
+
 	fmt.Println("\nУдаляем 3:", bst.Remove(3))
 	fmt.Println("После удаления 3:", bst.InOrder())
+
+	output(bst)
 
 	fmt.Println("\nУдаляем 5:", bst.Remove(5))
 	fmt.Println("После удаления 5:", bst.InOrder())
 	fmt.Println("Глубина:", bst.Depth())
 
-	lines = bst.PrintTree()
-	for _, line := range lines {
-		fmt.Println(line)
-	}
+	output(bst)
 
 	fmt.Println("\nПоиск 6:", bst.Find(6))
 	fmt.Println("Поиск 5:", bst.Find(5))
